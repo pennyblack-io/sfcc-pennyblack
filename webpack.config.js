@@ -44,3 +44,4 @@ var path = require('path');
             new ExtractTextPlugin({ filename: '[name].css' })
         ]
     }];
+
