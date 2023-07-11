@@ -38,12 +38,10 @@ OrderToPayloadTransformer.prototype._buildPayload = function () {
 }
 
 OrderToPayloadTransformer.prototype._buildCustomerData = function () {
-    var { firstName, lastName } = this._getName();
-
     var customer = {};
     customer.vendor_customer_id = this._customer.ID;
-    customer.first_name = firstName;
-    customer.last_name = lastName;
+    customer.first_name = this._order.defaultShipment.shippingAddress.getFirstName();
+    customer.last_name = this._order.defaultShipment.shippingAddress.getLastName();
     customer.email = this._order.getCustomerEmail();
     customer.language = Locale.getLocale(this._order.customerLocaleID).getLanguage();
     customer.total_orders = this._order.customer.orderHistory.orderCount + 1;
@@ -80,21 +78,6 @@ OrderToPayloadTransformer.prototype._buildOrderData = function () {
     }
 
     return order;
-}
-
-OrderToPayloadTransformer.prototype._getName = function () {
-    var firstName, lastName;
-    if (this._isGuest) {
-        var billingAddress = this._order.getBillingAddress();
-        if (billingAddress) {
-            firstName = billingAddress.getFirstName();
-            lastName = billingAddress.getLastName();
-        }
-    } else {
-        firstName = this._customer.getProfile().getFirstName();
-        lastName = this._customer.getProfile().getLastName();
-    }
-    return { firstName, lastName };
 }
 
 OrderToPayloadTransformer.prototype._getGiftMessages = function () {
