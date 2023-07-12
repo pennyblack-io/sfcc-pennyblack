@@ -1,16 +1,16 @@
 var HTTPClient = require('dw/net/HTTPClient');
 var Locale = require('dw/util/Locale');
 var Logger = require('dw/system/Logger');
+var config = require('*/cartridge/scripts/config');
 
 function sendOrderWebhook(order) {
     var client = new HTTPClient();
     var url = 'https://api.test.pennyblack.io/ingest/order';
-    var apiKey = '';
     var payload = (new OrderToPayloadTransformer()).transform(order);
 
     client.open('POST', url);
     client.setRequestHeader('Content-Type', 'application/json');
-    client.setRequestHeader('X-Api-Key', apiKey);
+    client.setRequestHeader('X-Api-Key', config.apiKey);
     client.send(JSON.stringify(payload));
 
     if (client.statusCode === 202) {
