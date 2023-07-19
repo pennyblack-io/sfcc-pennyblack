@@ -4,7 +4,7 @@ function OrderToPayloadTransformer() { }
 
 OrderToPayloadTransformer.prototype.transform = function (order) {
     this._order = order;
-    this._customer = order.getCustomer();
+    this._customer = order.customer;
     this._isGuest = (this._customer && this._customer.anonymous);
     return this._buildPayload();
 }
@@ -22,7 +22,7 @@ OrderToPayloadTransformer.prototype._buildCustomerData = function () {
     customer.vendor_customer_id = this._customer.ID;
     customer.first_name = this._order.defaultShipment.shippingAddress.firstName;
     customer.last_name = this._order.defaultShipment.shippingAddress.lastName;
-    customer.email = this._order.getCustomerEmail();
+    customer.email = this._order.customerEmail;
     customer.language = Locale.getLocale(this._order.customerLocaleID).language;
     customer.total_orders = this._order.customer.orderHistory.orderCount + 1;
     customer.tags = this._getCustomerGroups();
@@ -76,10 +76,10 @@ OrderToPayloadTransformer.prototype._getGiftMessages = function () {
 OrderToPayloadTransformer.prototype._getCustomerGroups = function () {
     var customerGroups = [];
     if (!this._isGuest) {
-        var groupsIterator = this._customer.getCustomerGroups().iterator();
+        var groupsIterator = this._customer.customerGroups.iterator();
         while (groupsIterator.hasNext()) {
             var group = groupsIterator.next();
-            customerGroups.push(group.getID());
+            customerGroups.push(group.ID);
         }
     }
     return customerGroups;
@@ -88,7 +88,7 @@ OrderToPayloadTransformer.prototype._getCustomerGroups = function () {
 OrderToPayloadTransformer.prototype._getLineItems = function () {
     var skus = [];
     var productTitles = [];
-    var productLineItems = this._order.getProductLineItems().iterator();
+    var productLineItems = this._order.productLineItems.iterator();
     while (productLineItems.hasNext()) {
 
         var productLineItem = productLineItems.next();
@@ -115,26 +115,26 @@ OrderToPayloadTransformer.prototype._getCouponCodes = function () {
 OrderToPayloadTransformer.prototype._getTotalSpent = function () {
     var totalSpent = 0.0;
     if (!this._isGuest) {
-        var start = 0;
-        var pageSize = 50;
-        var orders;
 
-        do {
-            orders = OrderMgr.searchOrders("customerNo = {0}", "-creationDate", this._customer.getCustomerNo());
-            orders.setStart(start);
-            orders.setPageSize(pageSize);
+        // NOTE: From the SFCC docs.
+        // 
+        // Starting with API version 10.6, these iterators can only be iterated once to avoid possible
+        // memory problems for really large result sets. Putting them into the pipeline dictionary and
+        // trying to loop them multiple times is no longer possible because this would require buffering
+        // the iterated elements internally.
 
-            while (orders.hasNext()) {
-                var pastOrder = orders.next();
-                totalSpent += pastOrder.totalGrossPrice.value;
-            }
+        // Prior to 10.6, and for all customers still running API version 10.4 (compatibility mode), SeekableIterator
+        // instances stored in the pipeline dictionary could be iterated multiple times (for example, by several loop nodes).
 
-            start += pageSize;
-        } while (orders.getCount() > start);
+        var historicalOrders = this._customer.orderHistory.orders;
+
+        while (historicalOrders.hasNext()) {
+            var order = historicalOrders.next();
+            totalSpent += order.totalGrossPrice.value;
+        }
     }
 
     totalSpent += this._order.totalGrossPrice.value;
-
     return totalSpent;
 }
 

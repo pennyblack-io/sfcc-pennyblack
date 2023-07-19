@@ -1,5 +1,5 @@
-const Customer = require("../customer/Customer");
 const Collection = require("../util/Collection");
+const Iterator = require("../util/Iterator");
 
 /**
  * Fake Order
@@ -13,18 +13,9 @@ class Order {
         this.creationDate = new Date(this.creationDate);
         this.shipments = new Collection(this.shipments);
         this.couponLineItems = new Collection(this.couponLineItems);
-    }
-
-    getCustomer() {
-        return new Customer(this.customer);
-    }
-
-    getCustomerEmail() {
-        return this.customer.email;
-    }
-
-    getProductLineItems() {
-        return new Collection(this.productLineItems);
+        this.productLineItems = new Collection(this.productLineItems);
+        this.customer.customerGroups = new Collection(this.customer.customerGroups);
+        this.customer.orderHistory.orders = new Iterator(this.customer.orderHistory.orders);
     }
 }
 

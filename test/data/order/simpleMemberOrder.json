@@ -16,11 +16,28 @@
     "currencyCode": "GBP",
     "customerLocaleID": "en_GB",
     "customer": {
-        "ID": 10,
-        "anonymous": true,
+        "ID": 20,
+        "anonymous": false,
         "orderHistory": {
-            "orderCount": 0
-        }
+            "orderCount": 0,
+            "orders": [
+                {
+                    "totalGrossPrice": {
+                        "value": 5.0
+                    }
+                },
+                {
+                    "totalGrossPrice": {
+                        "value": 7.5
+                    }
+                }
+            ]
+        },
+        "customerGroups": [
+            {
+                "ID": "STAFF"
+            }
+        ]
     },
     "customerEmail": "john.doe@example.com",
     "defaultShipment": {

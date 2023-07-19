@@ -18,7 +18,7 @@ describe('OrderToPayloadTransformer', function () {
             expect(payload.origin).to.eq("sfcc");
         });
 
-        describe('scenario: simple guest order', function () {
+        describe('scenario: simple guest checkout', function () {
 
             it('sets customer.vendor_customer_id to the customer ID associated with the order', function () {
                 var payload = (new OrderToPayloadTransformer()).transform(new Order(DataLoader('order', 'simpleGuestOrder')));
@@ -138,6 +138,19 @@ describe('OrderToPayloadTransformer', function () {
             it('sets order.promo_codes based on the order coupon code', function () {
                 var payload = (new OrderToPayloadTransformer()).transform(new Order(DataLoader('order', 'simpleGuestOrder')));
                 expect(payload.order.promo_codes).to.deep.eq(["TEST_COUPONG_CODE_01"]);
+            });
+        });
+
+        describe('scenario: simple member checkout', function () {
+
+            it('sets customer.tags to customer groups', function () {
+                var payload = (new OrderToPayloadTransformer()).transform(new Order(DataLoader('order', 'simpleMemberOrder')));
+                expect(payload.customer.tags).to.deep.eq(["STAFF"]);
+            });
+
+            it('sets customer.total_spent to the total gross value of the order and historical data', function () {
+                var payload = (new OrderToPayloadTransformer()).transform(new Order(DataLoader('order', 'simpleMemberOrder')));
+                expect(payload.customer.total_spent).to.eq(22.55);
             });
         });
     });

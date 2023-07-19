@@ -16,6 +16,10 @@ class Collection {
     iterator() {
         return new Iterator(this.items);
     }
+
+    get length() {
+        return this.items.length;
+    }
 }
 
 module.exports = Collection;
