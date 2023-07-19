@@ -1,0 +1,25 @@
+name: default
+
+on:
+  push:
+    branches: [dave/pb-983-create-test-suite-for-sfcc-integration]
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: git checkout
+      uses: actions/checkout@v3
+
+    - name: nodejs setup (12.x)
+      uses: actions/setup-node@v2
+      with:
+        node-version: 12.x
+
+    - name: install dependencies
+      run: npm ci
+    
+    - name: test
+      run: npm run test

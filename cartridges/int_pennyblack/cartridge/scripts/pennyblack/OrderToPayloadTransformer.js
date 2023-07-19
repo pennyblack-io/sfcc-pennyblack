@@ -1,31 +1,11 @@
-var HTTPClient = require('dw/net/HTTPClient');
 var Locale = require('dw/util/Locale');
-var Logger = require('dw/system/Logger');
-var config = require('*/cartridge/scripts/config');
-
-function sendOrderWebhook(order) {
-    var client = new HTTPClient();
-    var url = 'https://api.test.pennyblack.io/ingest/order';
-    var payload = (new OrderToPayloadTransformer()).transform(order);
-
-    client.open('POST', url);
-    client.setRequestHeader('Content-Type', 'application/json');
-    client.setRequestHeader('X-Api-Key', config.apiKey);
-    client.send(JSON.stringify(payload));
-
-    if (client.statusCode === 202) {
-        Logger.info('pennyblack order ingest success for order: {0}', order.getUUID());
-    } else {
-        Logger.error('pennyblack order ingest failed for order: {0}. Status Code: {1}, Error Text: {2}', order.getUUID(), client.statusCode, client.getErrorText());
-    }
-}
 
 function OrderToPayloadTransformer() { }
 
 OrderToPayloadTransformer.prototype.transform = function (order) {
     this._order = order;
     this._customer = order.getCustomer();
-    this._isGuest = (this._customer && this._customer.isAnonymous());
+    this._isGuest = (this._customer && this._customer.anonymous);
     return this._buildPayload();
 }
 
@@ -40,26 +20,26 @@ OrderToPayloadTransformer.prototype._buildPayload = function () {
 OrderToPayloadTransformer.prototype._buildCustomerData = function () {
     var customer = {};
     customer.vendor_customer_id = this._customer.ID;
-    customer.first_name = this._order.defaultShipment.shippingAddress.getFirstName();
-    customer.last_name = this._order.defaultShipment.shippingAddress.getLastName();
+    customer.first_name = this._order.defaultShipment.shippingAddress.firstName;
+    customer.last_name = this._order.defaultShipment.shippingAddress.lastName;
     customer.email = this._order.getCustomerEmail();
-    customer.language = Locale.getLocale(this._order.customerLocaleID).getLanguage();
+    customer.language = Locale.getLocale(this._order.customerLocaleID).language;
     customer.total_orders = this._order.customer.orderHistory.orderCount + 1;
     customer.tags = this._getCustomerGroups();
     customer.total_spent = this._getTotalSpent();
-
+    customer.locale = this._order.customerLocaleID;
     return customer;
 }
 
 OrderToPayloadTransformer.prototype._buildOrderData = function () {
     var giftMessages = this._getGiftMessages();
-    var { skus, product_titles: productTitles } = this._getLineItems();
+    var { skus, productTitles } = this._getLineItems();
     var couponCodes = this._getCouponCodes();
 
     var order = {};
-    order.id = this._order.getUUID();
-    order.number = this._order.getUUID();
-    order.created_at = this._order.getCreationDate().toISOString();
+    order.id = this._order.orderNo;
+    order.number = this._order.orderNo;
+    order.created_at = this._order.creationDate.toISOString();
     order.total_amount = this._order.totalGrossPrice.value;
     order.total_items = this._order.productLineItems.length;
     order.billing_country = this._order.billingAddress.countryCode.value;
@@ -82,10 +62,10 @@ OrderToPayloadTransformer.prototype._buildOrderData = function () {
 
 OrderToPayloadTransformer.prototype._getGiftMessages = function () {
     var giftMessages = [];
-    var shipments = this._order.getShipments().iterator();
+    var shipments = this._order.shipments.iterator();
     while (shipments.hasNext()) {
         var shipment = shipments.next();
-        var giftMessage = shipment.getGiftMessage();
+        var giftMessage = shipment.giftMessage;
         if (giftMessage) {
             giftMessages.push(giftMessage);
         }
@@ -110,19 +90,21 @@ OrderToPayloadTransformer.prototype._getLineItems = function () {
     var productTitles = [];
     var productLineItems = this._order.getProductLineItems().iterator();
     while (productLineItems.hasNext()) {
+
         var productLineItem = productLineItems.next();
-        skus.push(productLineItem.getManufacturerSKU());
-        productTitles.push(productLineItem.getProductName());
+        skus.push(productLineItem.manufacturerSKU);
+        productTitles.push(productLineItem.productName);
     }
-    return { skus, productTitles: productTitles };
+
+    return { skus, productTitles };
 }
 
 OrderToPayloadTransformer.prototype._getCouponCodes = function () {
     var couponCodes = [];
-    var couponLineItems = this._order.getCouponLineItems().iterator();
+    var couponLineItems = this._order.couponLineItems.iterator();
     while (couponLineItems.hasNext()) {
         var couponLineItem = couponLineItems.next();
-        var couponCode = couponLineItem.getCouponCode();
+        var couponCode = couponLineItem.couponCode;
         if (couponCode) {
             couponCodes.push(couponCode);
         }
@@ -144,18 +126,16 @@ OrderToPayloadTransformer.prototype._getTotalSpent = function () {
 
             while (orders.hasNext()) {
                 var pastOrder = orders.next();
-                totalSpent += pastOrder.getTotalGrossPrice().value;
+                totalSpent += pastOrder.totalGrossPrice.value;
             }
 
             start += pageSize;
         } while (orders.getCount() > start);
     }
 
-    totalSpent += this._order.getTotalGrossPrice().value;
+    totalSpent += this._order.totalGrossPrice.value;
 
     return totalSpent;
 }
 
-module.exports = {
-    sendOrderWebhook: sendOrderWebhook
-};
+module.exports = OrderToPayloadTransformer;
