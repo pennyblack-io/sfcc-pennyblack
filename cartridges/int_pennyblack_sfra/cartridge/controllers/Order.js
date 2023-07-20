@@ -6,10 +6,10 @@ var orderWebhook = require('*/cartridge/scripts/pennyblack/orderWebhook');
 
 server.extend(base);
 server.append('Confirm', function (req, res, next) {
-    Logger.info("pennyblack: intercepting order confirmation");
-    var order = orderMgr.getOrder(req.form.orderID, req.form.orderToken);
-    orderWebhook.sendOrderWebhook(order);
-    return next();
+  Logger.info('pennyblack: intercepting order confirmation');
+  var order = orderMgr.getOrder(req.form.orderID, req.form.orderToken);
+  orderWebhook.sendOrderWebhook(order);
+  return next();
 });
 
 module.exports = server.exports();

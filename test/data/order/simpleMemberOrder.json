@@ -1,71 +1,71 @@
 {
-    "orderNo": "1",
-    "billingAddress": {
-        "countryCode": {
-            "value": "gb"
-        },
-        "city": "London",
-        "postalCode": "ME1 2DR"
+  "orderNo": "1",
+  "billingAddress": {
+    "countryCode": {
+      "value": "gb"
     },
-    "couponLineItems": [
+    "city": "London",
+    "postalCode": "ME1 2DR"
+  },
+  "couponLineItems": [
+    {
+      "couponCode": "TEST_COUPONG_CODE_01"
+    }
+  ],
+  "creationDate": "2023-07-17T14:15:36.046Z",
+  "currencyCode": "GBP",
+  "customerLocaleID": "en_GB",
+  "customer": {
+    "ID": 20,
+    "anonymous": false,
+    "orderHistory": {
+      "orderCount": 0,
+      "orders": [
         {
-            "couponCode": "TEST_COUPONG_CODE_01"
-        }
-    ],
-    "creationDate": "2023-07-17T14:15:36.046Z",
-    "currencyCode": "GBP",
-    "customerLocaleID": "en_GB",
-    "customer": {
-        "ID": 20,
-        "anonymous": false,
-        "orderHistory": {
-            "orderCount": 0,
-            "orders": [
-                {
-                    "totalGrossPrice": {
-                        "value": 5.0
-                    }
-                },
-                {
-                    "totalGrossPrice": {
-                        "value": 7.5
-                    }
-                }
-            ]
-        },
-        "customerGroups": [
-            {
-                "ID": "STAFF"
-            }
-        ]
-    },
-    "customerEmail": "john.doe@example.com",
-    "defaultShipment": {
-        "shippingAddress": {
-            "firstName": "Joe",
-            "lastName": "Bloggs",
-            "countryCode": {
-                "value": "gb"
-            },
-            "city": "Manchester",
-            "postalCode": "ME2 2DR"
-        }
-    },
-    "shipments": [
-        {
-            "giftMessage": "Test gift message 1"
+          "totalGrossPrice": {
+            "value": 5.0
+          }
         },
         {
-            "giftMessage": "Test gift message 2"
+          "totalGrossPrice": {
+            "value": 7.5
+          }
         }
-    ],
-    "totalGrossPrice": {
-        "value": 10.05
+      ]
     },
-    "productLineItems": [
-        {
-            "manufacturerSKU": "TEST-001",
-            "productName": "Test Product 01"
-        }
+    "customerGroups": [
+      {
+        "ID": "STAFF"
+      }
     ]
+  },
+  "customerEmail": "john.doe@example.com",
+  "defaultShipment": {
+    "shippingAddress": {
+      "firstName": "Joe",
+      "lastName": "Bloggs",
+      "countryCode": {
+        "value": "gb"
+      },
+      "city": "Manchester",
+      "postalCode": "ME2 2DR"
+    }
+  },
+  "shipments": [
+    {
+      "giftMessage": "Test gift message 1"
+    },
+    {
+      "giftMessage": "Test gift message 2"
+    }
+  ],
+  "totalGrossPrice": {
+    "value": 10.05
+  },
+  "productLineItems": [
+    {
+      "manufacturerSKU": "TEST-001",
+      "productName": "Test Product 01"
+    }
+  ]
 }
