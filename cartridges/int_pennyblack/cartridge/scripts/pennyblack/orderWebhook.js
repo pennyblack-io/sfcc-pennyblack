@@ -4,12 +4,16 @@ var Logger = require('dw/system/Logger');
 var config = require('*/cartridge/scripts/pennyblack/config');
 var OrderToPayloadTransformer = require('*/cartridge/scripts/pennyblack/OrderToPayloadTransformer');
 
+var endpoints = {
+  production: 'https://api.pennyblack.io/ingest/order',
+  test: 'https://api.test.pennyblack.io/ingest/order',
+};
+
 function sendOrderWebhook(order) {
   var client = new HTTPClient();
-  var url = 'https://api.test.pennyblack.io/ingest/order';
   var payload = new OrderToPayloadTransformer().transform(order);
 
-  client.open('POST', url);
+  client.open('POST', endpoints[config.mode]);
   client.setRequestHeader('Content-Type', 'application/json');
   client.setRequestHeader('X-Api-Key', config.apiKey);
   client.send(JSON.stringify(payload));
