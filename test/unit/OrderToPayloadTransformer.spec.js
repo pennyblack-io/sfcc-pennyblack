@@ -14,12 +14,12 @@ describe('OrderToPayloadTransformer', function () {
   );
 
   describe('transform()', function () {
-    it('sets the origin to sfcc', function () {
-      var payload = new OrderToPayloadTransformer().transform(new Order(DataLoader('order', 'simpleGuestOrder')));
-      expect(payload.origin).to.eq('sfcc');
-    });
-
     describe('scenario: simple guest checkout', function () {
+      it('sets the origin to sfcc', function () {
+        var payload = new OrderToPayloadTransformer().transform(new Order(DataLoader('order', 'simpleGuestOrder')));
+        expect(payload.origin).to.eq('sfcc');
+      });
+
       it('sets customer.vendor_customer_id to the customer ID associated with the order', function () {
         var payload = new OrderToPayloadTransformer().transform(new Order(DataLoader('order', 'simpleGuestOrder')));
         expect(payload.customer.vendor_customer_id).to.eq(10);
@@ -125,6 +125,13 @@ describe('OrderToPayloadTransformer', function () {
         expect(payload.order.skus).to.deep.eq(['TEST-001']);
       });
 
+      it('falls back to product ID when manufacturer SKU is not specified for a product', function () {
+        let data = DataLoader('order', 'simpleGuestOrder');
+        data.productLineItems[0].manufacturerSKU = null;
+        let payload = new OrderToPayloadTransformer().transform(new Order(data));
+        expect(payload.order.skus).to.deep.eq(['001']);
+      });
+
       it('sets order.product_titles to a distinct list of product titles from the order', function () {
         var payload = new OrderToPayloadTransformer().transform(new Order(DataLoader('order', 'simpleGuestOrder')));
         expect(payload.order.product_titles).to.deep.eq(['Test Product 01']);
@@ -141,16 +148,29 @@ describe('OrderToPayloadTransformer', function () {
       });
     });
 
-    describe('scenario: simple member checkout', function () {
+    describe('scenario: simple member first ever checkout', function () {
       it('sets customer.tags to customer groups', function () {
-        var payload = new OrderToPayloadTransformer().transform(new Order(DataLoader('order', 'simpleMemberOrder')));
-        expect(payload.customer.tags).to.deep.eq(['STAFF']);
+        var payload = new OrderToPayloadTransformer().transform(
+          new Order(DataLoader('order', 'simpleMemberFirstOrder')),
+        );
+        expect(payload.customer.tags).to.deep.eq(['NEW']);
       });
 
-      it('sets customer.total_spent to the total gross value of the order and historical data', function () {
-        var payload = new OrderToPayloadTransformer().transform(new Order(DataLoader('order', 'simpleMemberOrder')));
-        expect(payload.customer.total_spent).to.eq(22.55);
+      it('sets customer.total_spent to the total gross value of all placed orders', function () {
+        var payload = new OrderToPayloadTransformer().transform(
+          new Order(DataLoader('order', 'simpleMemberFirstOrder')),
+        );
+        expect(payload.customer.total_spent).to.eq(10.05);
+      });
+
+      it('sets customer.total_orders to 1', function () {
+        var payload = new OrderToPayloadTransformer().transform(
+          new Order(DataLoader('order', 'simpleMemberFirstOrder')),
+        );
+        expect(payload.customer.total_orders).to.eq(1);
       });
     });
+
+    describe('scenario: simple member with 2 previous orders', function () {});
   });
 });

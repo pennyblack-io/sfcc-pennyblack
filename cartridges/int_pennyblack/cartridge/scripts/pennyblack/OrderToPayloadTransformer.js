@@ -24,11 +24,19 @@ OrderToPayloadTransformer.prototype._buildCustomerData = function () {
   customer.last_name = this._order.defaultShipment.shippingAddress.lastName;
   customer.email = this._order.customerEmail;
   customer.language = Locale.getLocale(this._order.customerLocaleID).language;
-  customer.total_orders = this._order.customer.orderHistory.orderCount + 1;
+  customer.total_orders = this._getTotalOrders();
   customer.tags = this._getCustomerGroups();
   customer.total_spent = this._getTotalSpent();
   customer.locale = this._order.customerLocaleID;
   return customer;
+};
+
+OrderToPayloadTransformer.prototype._getTotalOrders = function () {
+  if (this._isGuest) {
+    return 1;
+  }
+
+  return this._customer.orderHistory.orderCount;
 };
 
 OrderToPayloadTransformer.prototype._buildOrderData = function () {
@@ -91,7 +99,7 @@ OrderToPayloadTransformer.prototype._getLineItems = function () {
   var productLineItems = this._order.productLineItems.iterator();
   while (productLineItems.hasNext()) {
     var productLineItem = productLineItems.next();
-    skus.push(productLineItem.manufacturerSKU);
+    skus.push(productLineItem.manufacturerSKU ? productLineItem.manufacturerSKU : productLineItem.productID);
     productTitles.push(productLineItem.productName);
   }
 
@@ -112,27 +120,18 @@ OrderToPayloadTransformer.prototype._getCouponCodes = function () {
 };
 
 OrderToPayloadTransformer.prototype._getTotalSpent = function () {
-  var totalSpent = 0.0;
-  if (!this._isGuest) {
-    // NOTE: From the SFCC docs.
-    //
-    // Starting with API version 10.6, these iterators can only be iterated once to avoid possible
-    // memory problems for really large result sets. Putting them into the pipeline dictionary and
-    // trying to loop them multiple times is no longer possible because this would require buffering
-    // the iterated elements internally.
-
-    // Prior to 10.6, and for all customers still running API version 10.4 (compatibility mode), SeekableIterator
-    // instances stored in the pipeline dictionary could be iterated multiple times (for example, by several loop nodes).
-
-    var historicalOrders = this._customer.orderHistory.orders;
-
-    while (historicalOrders.hasNext()) {
-      var order = historicalOrders.next();
-      totalSpent += order.totalGrossPrice.value;
-    }
+  if (this._isGuest) {
+    return this._order.totalGrossPrice.value;
   }
 
-  totalSpent += this._order.totalGrossPrice.value;
+  var totalSpent = 0.0;
+  var historicalOrders = this._customer.orderHistory.orders;
+
+  while (historicalOrders.hasNext()) {
+    var order = historicalOrders.next();
+    totalSpent += order.totalGrossPrice.value;
+  }
+
   return totalSpent;
 };
 

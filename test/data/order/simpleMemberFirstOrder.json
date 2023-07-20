@@ -19,23 +19,19 @@
     "ID": 20,
     "anonymous": false,
     "orderHistory": {
-      "orderCount": 0,
+      "orderCount": 1,
       "orders": [
         {
+          "orderNo": "1",
           "totalGrossPrice": {
-            "value": 5.0
-          }
-        },
-        {
-          "totalGrossPrice": {
-            "value": 7.5
+            "value": 10.05
           }
         }
       ]
     },
     "customerGroups": [
       {
-        "ID": "STAFF"
+        "ID": "NEW"
       }
     ]
   },
@@ -64,6 +60,7 @@
   },
   "productLineItems": [
     {
+      "productID": "001",
       "manufacturerSKU": "TEST-001",
       "productName": "Test Product 01"
     }
