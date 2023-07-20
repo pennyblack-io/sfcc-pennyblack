@@ -6,18 +6,18 @@ const Iterator = require('./Iterator');
  * Very simplisitic implementation providing just enough functionality to drive our tests.
  */
 class Collection {
-  items;
+  _items;
 
   constructor(items) {
-    this.items = items;
+    this._items = items;
   }
 
   iterator() {
-    return new Iterator(this.items);
+    return new Iterator(this._items);
   }
 
   get length() {
-    return this.items.length;
+    return this._items.length;
   }
 }
 
