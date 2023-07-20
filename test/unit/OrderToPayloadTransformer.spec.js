@@ -14,7 +14,7 @@ describe('OrderToPayloadTransformer', function () {
   );
 
   describe('transform()', function () {
-    describe('scenario: simple guest checkout', function () {
+    describe('guest checkout', function () {
       it('sets the origin to sfcc', function () {
         var payload = new OrderToPayloadTransformer().transform(new Order(DataLoader('order', 'simpleGuestOrder')));
         expect(payload.origin).to.eq('sfcc');
@@ -148,7 +148,7 @@ describe('OrderToPayloadTransformer', function () {
       });
     });
 
-    describe('scenario: simple member first ever checkout', function () {
+    describe('new member first ever checkout', function () {
       it('sets customer.tags to customer groups', function () {
         var payload = new OrderToPayloadTransformer().transform(
           new Order(DataLoader('order', 'simpleMemberFirstOrder')),
@@ -163,7 +163,7 @@ describe('OrderToPayloadTransformer', function () {
         expect(payload.customer.total_spent).to.eq(10.05);
       });
 
-      it('sets customer.total_orders to 1', function () {
+      it('sets customer.total_orders to count of all orders', function () {
         var payload = new OrderToPayloadTransformer().transform(
           new Order(DataLoader('order', 'simpleMemberFirstOrder')),
         );
@@ -171,6 +171,20 @@ describe('OrderToPayloadTransformer', function () {
       });
     });
 
-    describe('scenario: simple member with 2 previous orders', function () {});
+    describe('member with previous orders', function () {
+      it('sets customer.total_spent to the total gross value of all placed orders', function () {
+        var payload = new OrderToPayloadTransformer().transform(
+          new Order(DataLoader('order', 'simpleMemberWithPreviousOrders')),
+        );
+        expect(payload.customer.total_spent).to.eq(76.04);
+      });
+
+      it('sets customer.total_orders to count of all orders', function () {
+        var payload = new OrderToPayloadTransformer().transform(
+          new Order(DataLoader('order', 'simpleMemberWithPreviousOrders')),
+        );
+        expect(payload.customer.total_orders).to.eq(3);
+      });
+    });
   });
 });
