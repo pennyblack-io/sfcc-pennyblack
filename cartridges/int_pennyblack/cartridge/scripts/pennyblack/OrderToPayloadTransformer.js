@@ -27,7 +27,6 @@ OrderToPayloadTransformer.prototype._buildCustomerData = function () {
   customer.total_orders = this._getTotalOrders();
   customer.tags = this._getCustomerGroups();
   customer.total_spent = this._getTotalSpent();
-  customer.locale = this._order.customerLocaleID;
   return customer;
 };
 
