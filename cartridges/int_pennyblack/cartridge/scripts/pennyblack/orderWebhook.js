@@ -6,8 +6,7 @@ var OrderToPayloadTransformer = require('*/cartridge/scripts/pennyblack/OrderToP
 
 function sendOrderWebhook(order) {
   var client = new HTTPClient();
-  //var url = 'https://api.test.pennyblack.io/ingest/order';
-  var url = 'https://webhook.site/02bee4a1-0cde-4859-8ecb-9ee1cff85ad0';
+  var url = 'https://api.test.pennyblack.io/ingest/order';
   var payload = new OrderToPayloadTransformer().transform(order);
 
   client.open('POST', url);
