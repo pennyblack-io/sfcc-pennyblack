@@ -148,6 +148,18 @@ describe('OrderToPayloadTransformer', function () {
         let payload = new OrderToPayloadTransformer().transform(new Order(DataLoader('order', 'guestWithNoHistory')));
         expect(payload.order.promo_codes).to.deep.eq(['TEST_COUPON_CODE_01']);
       });
+
+      it('skips billing address when not set on order', function () {
+        // https://salesforcecommercecloud.github.io/b2c-dev-doc/docs/current/scriptapi/html/index.html?target=class_dw_order_Order.html
+        //   billingAddress  :  OrderAddress  (Read Only)
+        //   The billing address defined for the container. Returns null if no billing address has been created yet.
+        let data = DataLoader('order', 'guestWithNoHistory');
+        data.billingAddress = null;
+        let payload = new OrderToPayloadTransformer().transform(new Order(data));
+        expect('billing_country' in payload).to.eq(false);
+        expect('billing_postcode' in payload).to.eq(false);
+        expect('billing_city' in payload).to.eq(false);
+      });
     });
 
     describe('guest with previous orders', function () {

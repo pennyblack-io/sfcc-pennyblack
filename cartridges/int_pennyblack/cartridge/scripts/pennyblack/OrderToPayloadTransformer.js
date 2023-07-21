@@ -44,9 +44,6 @@ OrderToPayloadTransformer.prototype._buildOrderData = function () {
   order.created_at = this._order.creationDate.toISOString();
   order.total_amount = this._order.totalGrossPrice.value;
   order.total_items = this._order.productLineItems.length;
-  order.billing_country = this._order.billingAddress.countryCode.value;
-  order.billing_postcode = this._order.billingAddress.postalCode;
-  order.billing_city = this._order.billingAddress.city;
   order.shipping_country = this._order.defaultShipment.shippingAddress.countryCode.value;
   order.shipping_postcode = this._order.defaultShipment.shippingAddress.postalCode;
   order.shipping_city = this._order.defaultShipment.shippingAddress.city;
@@ -54,6 +51,12 @@ OrderToPayloadTransformer.prototype._buildOrderData = function () {
   order.skus = skus;
   order.product_titles = productTitles;
   order.promo_codes = couponCodes;
+
+  if ('billingAddress' in this._order && this._order.billingAddress != null) {
+    order.billing_country = this._order.billingAddress.countryCode.value;
+    order.billing_postcode = this._order.billingAddress.postalCode;
+    order.billing_city = this._order.billingAddress.city;
+  }
 
   if (giftMessages.length > 0) {
     order.gift_message = giftMessages[0];
