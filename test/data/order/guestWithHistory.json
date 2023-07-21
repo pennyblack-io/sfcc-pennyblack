@@ -1,5 +1,5 @@
 {
-  "orderNo": "1",
+  "orderNo": "3",
   "billingAddress": {
     "countryCode": {
       "value": "gb"
@@ -9,31 +9,18 @@
   },
   "couponLineItems": [
     {
-      "couponCode": "TEST_COUPONG_CODE_01"
+      "couponCode": "TEST_COUPON_CODE_01"
     }
   ],
   "creationDate": "2023-07-17T14:15:36.046Z",
   "currencyCode": "GBP",
   "customerLocaleID": "en_GB",
   "customer": {
-    "ID": 20,
-    "anonymous": false,
+    "ID": 10,
+    "anonymous": true,
     "orderHistory": {
-      "orderCount": 1,
-      "orders": [
-        {
-          "orderNo": "1",
-          "totalGrossPrice": {
-            "value": 10.05
-          }
-        }
-      ]
-    },
-    "customerGroups": [
-      {
-        "ID": "NEW"
-      }
-    ]
+      "orderCount": 0
+    }
   },
   "customerEmail": "john.doe@example.com",
   "defaultShipment": {

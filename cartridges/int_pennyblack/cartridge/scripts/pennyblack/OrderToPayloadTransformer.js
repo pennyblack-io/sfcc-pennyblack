@@ -1,4 +1,5 @@
 var Locale = require('dw/util/Locale');
+var OrderMgr = require('dw/order/OrderMgr');
 
 function OrderToPayloadTransformer() {}
 
@@ -18,24 +19,18 @@ OrderToPayloadTransformer.prototype._buildPayload = function () {
 };
 
 OrderToPayloadTransformer.prototype._buildCustomerData = function () {
+  var { totalOrders, totalSpent } = this._getOrderHistory();
+
   var customer = {};
   customer.vendor_customer_id = this._customer.ID;
   customer.first_name = this._order.defaultShipment.shippingAddress.firstName;
   customer.last_name = this._order.defaultShipment.shippingAddress.lastName;
   customer.email = this._order.customerEmail;
   customer.language = Locale.getLocale(this._order.customerLocaleID).language;
-  customer.total_orders = this._getTotalOrders();
+  customer.total_orders = totalOrders;
   customer.tags = this._getCustomerGroups();
-  customer.total_spent = this._getTotalSpent();
+  customer.total_spent = totalSpent;
   return customer;
-};
-
-OrderToPayloadTransformer.prototype._getTotalOrders = function () {
-  if (this._isGuest) {
-    return 1;
-  }
-
-  return this._customer.orderHistory.orderCount;
 };
 
 OrderToPayloadTransformer.prototype._buildOrderData = function () {
@@ -118,20 +113,27 @@ OrderToPayloadTransformer.prototype._getCouponCodes = function () {
   return couponCodes;
 };
 
-OrderToPayloadTransformer.prototype._getTotalSpent = function () {
-  if (this._isGuest) {
-    return this._order.totalGrossPrice.value;
-  }
+OrderToPayloadTransformer.prototype._getOrderHistory = function () {
+  var orders = OrderMgr.searchOrders('customerEmail = {0}', null, this._order.customerEmail);
 
+  var totalOrders = orders.count;
   var totalSpent = 0.0;
-  var historicalOrders = this._customer.orderHistory.orders;
+  var includesCurrentOrder = false;
 
-  while (historicalOrders.hasNext()) {
-    var order = historicalOrders.next();
+  while (orders.hasNext()) {
+    var order = orders.next();
     totalSpent += order.totalGrossPrice.value;
+    if (!includesCurrentOrder && order.orderNo == this._order.orderNo) {
+      includesCurrentOrder = true;
+    }
   }
 
-  return totalSpent;
+  if (!includesCurrentOrder) {
+    totalOrders++;
+    totalSpent += this._order.totalGrossPrice.value;
+  }
+
+  return { totalOrders, totalSpent };
 };
 
 module.exports = OrderToPayloadTransformer;

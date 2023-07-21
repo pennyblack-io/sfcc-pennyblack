@@ -9,7 +9,7 @@
   },
   "couponLineItems": [
     {
-      "couponCode": "TEST_COUPONG_CODE_01"
+      "couponCode": "TEST_COUPON_CODE_01"
     }
   ],
   "creationDate": "2023-07-17T14:15:36.046Z",

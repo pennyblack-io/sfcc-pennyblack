@@ -1,0 +1,24 @@
+{
+  "john.doe@example.com": [
+    {
+      "orderNo": "4",
+      "customer": { "anonymous": false },
+      "totalGrossPrice": { "value": 15.0 }
+    },
+    {
+      "orderNo": "3",
+      "customer": { "anonymous": false },
+      "totalGrossPrice": { "value": 50.99 }
+    },
+    {
+      "orderNo": "2",
+      "customer": { "anonymous": false },
+      "totalGrossPrice": { "value": 10.05 }
+    },
+    {
+      "orderNo": "1",
+      "customer": { "anonymous": true },
+      "totalGrossPrice": { "value": 60.55 }
+    }
+  ]
+}

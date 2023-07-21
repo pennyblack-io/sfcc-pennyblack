@@ -1,5 +1,5 @@
 {
-  "orderNo": "3",
+  "orderNo": "1",
   "billingAddress": {
     "countryCode": {
       "value": "gb"
@@ -9,7 +9,7 @@
   },
   "couponLineItems": [
     {
-      "couponCode": "TEST_COUPON_CODE_01"
+      "couponCode": "TEST_COUPONG_CODE_01"
     }
   ],
   "creationDate": "2023-07-17T14:15:36.046Z",
@@ -19,20 +19,8 @@
     "ID": 20,
     "anonymous": false,
     "orderHistory": {
-      "orderCount": 3,
+      "orderCount": 1,
       "orders": [
-        {
-          "orderNo": "3",
-          "totalGrossPrice": {
-            "value": 15.0
-          }
-        },
-        {
-          "orderNo": "2",
-          "totalGrossPrice": {
-            "value": 50.99
-          }
-        },
         {
           "orderNo": "1",
           "totalGrossPrice": {
@@ -43,7 +31,10 @@
     },
     "customerGroups": [
       {
-        "ID": "LOYAL"
+        "ID": "Everyone"
+      },
+      {
+        "ID": "Registered"
       }
     ]
   },
@@ -62,10 +53,13 @@
   "shipments": [
     {
       "giftMessage": "Test gift message 1"
+    },
+    {
+      "giftMessage": "Test gift message 2"
     }
   ],
   "totalGrossPrice": {
-    "value": 15.0
+    "value": 10.05
   },
   "productLineItems": [
     {

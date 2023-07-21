@@ -1,0 +1,9 @@
+{
+  "john.doe@example.com": [
+    {
+      "orderNo": "1",
+      "customer": { "anonymous": true },
+      "totalGrossPrice": { "value": 10.05 }
+    }
+  ]
+}
