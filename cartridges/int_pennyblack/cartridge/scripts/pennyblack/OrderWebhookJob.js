@@ -44,27 +44,32 @@ OrderWebhookJob.prototype._processQueue = function () {
 };
 
 OrderWebhookJob.prototype._sendWebhook = function (entry) {
-  var client = new HTTPClient();
   var payload = this._orderToPayload(entry.custom.order);
-
   if (payload === null) {
-    Transaction.wrap(function () {
-      entry.custom.status = OrderWebhook.Status.ERROR;
-      entry.custom.response_code = 0;
-      entry.custom.response_message = 'internal error whilst constructing payload';
-    });
+    this._updateEntry(entry, OrderWebhook.Status.ERROR, 0, 'sfcc internal error whilst constructing payload');
+    return;
   }
 
+  var client = new HTTPClient();
   client.open('POST', this._endpoints[Config.get('mode')]);
   client.setTimeout(10 * MS_IN_SECOND);
   client.setRequestHeader('Content-Type', 'application/json');
   client.setRequestHeader('X-Api-Key', this._apiKey);
   client.send(JSON.stringify(payload));
 
+  this._updateEntry(
+    entry,
+    client.statusCode == 201 ? OrderWebhook.Status.SUCCESS : OrderWebhook.Status.ERROR,
+    client.statusCode,
+    client.text,
+  );
+};
+
+OrderWebhookQueue.prototype._updateEntry = function (entry, status, code, message) {
   Transaction.wrap(function () {
-    entry.custom.status = client.statusCode == 201 ? OrderWebhook.Status.SUCCESS : OrderWebhook.Status.ERROR;
-    entry.custom.response_code = client.statusCode;
-    entry.custom.response_message = client.text;
+    entry.custom.status = status;
+    entry.custom.response_code = code;
+    entry.custom.response_message = message;
   });
 };
 

@@ -11,7 +11,7 @@ function OrderWebhookQueue() {
   this._queueEntries = null;
 }
 
-OrderWebhookQueue.prototype._queueName = 'PennyBlackOrderWebhookQueue';
+OrderWebhookQueue.prototype._queueName = 'PennyBlack_OrderWebhookQueue';
 
 OrderWebhookQueue.prototype.push = function (order) {
   var self = this;
