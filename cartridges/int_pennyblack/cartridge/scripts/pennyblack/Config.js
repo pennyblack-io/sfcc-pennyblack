@@ -1,35 +1,21 @@
 var Site = require('dw/system/Site');
 
-function Config() {
-  this._sites = null;
-}
+function Config() {}
 
-Config.prototype.get = function(name, siteId) {
+Config.prototype._defaults = {
+  enabled: false,
+  mode: 'production',
+  apiKey: '',
+};
 
-  preferenceId = 'pennyblack_' + name;
-
-  if (!siteId) {
-    return Site.current.getCustomPreferenceValue(preferenceId)
+Config.prototype.get = function (name) {
+  var value = Site.current.getCustomPreferenceValue('pennyblack_' + name);
+  if (value == null) {
+    return this._defaults[name];
   }
+  return value;
+};
 
-  if (this._sites == null) {
-    this._sites = this._mapSitesbyId();
-  }
+var instance = new Config();
 
-  if (!(siteId in this._sites)) {
-    return null;
-  }
-
-  return this._sites[siteId].getCustomPreferenceValue(preferenceId);
-}
-
-Config.prototype._mapSitesbyId = function() {
-  var sites = Site.getAllSites().iterator();
-  this._sites = {};
-  while (sites.hasNext()) {
-    var site = sites.next();
-    this._sites[site.ID] = site;
-  }
-}
-
-module.exports = (new Config());
+module.exports = instance;
