@@ -67,9 +67,16 @@ describe('OrderToPayloadTransformer', function () {
         expect(payload.order.id).to.eq('1');
       });
 
-      it('sets order.number based on the order no. of the current order', function () {
+      it('sets order.number based on the external order no. of the current order', function () {
         let payload = new OrderToPayloadTransformer().transform(new Order(DataLoader('order', 'guestWithNoHistory')));
-        expect(payload.order.number).to.eq('1');
+        expect(payload.order.number).to.eq('#1');
+      });
+
+      it('sets order.number to the order no. when the external order no. is null', function () {
+        let data = DataLoader('order', 'guestWithNoHistory');
+        data.externalOrderNo = null;
+        let payload = new OrderToPayloadTransformer().transform(new Order(data));
+        expect(payload.order.number).to.deep.eq('1');
       });
 
       it('sets order.created_at from the current order in the ISO 8601 format', function () {

@@ -1,5 +1,6 @@
 {
   "orderNo": "3",
+  "externalOrderNo": "#3",
   "billingAddress": {
     "countryCode": {
       "value": "gb"

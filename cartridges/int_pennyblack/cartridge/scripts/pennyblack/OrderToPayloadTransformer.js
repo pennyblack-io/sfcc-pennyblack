@@ -40,7 +40,7 @@ OrderToPayloadTransformer.prototype._buildOrderData = function () {
 
   var order = {};
   order.id = this._order.orderNo;
-  order.number = this._order.orderNo;
+  order.number = this._order.externalOrderNo !== null ? this._order.externalOrderNo : this._order.orderNo;
   order.created_at = this._order.creationDate.toISOString();
   order.total_amount = this._order.totalGrossPrice.value;
   order.total_items = this._order.productLineItems.length;
