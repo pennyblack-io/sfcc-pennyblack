@@ -17,7 +17,7 @@ OrderWebhookQueue.prototype.push = function (order) {
   var self = this;
 
   if (!Config.get('enabled') || !this._isValidOrder(order)) {
-    return;
+    return false;
   }
 
   Transaction.wrap(function () {
@@ -26,6 +26,8 @@ OrderWebhookQueue.prototype.push = function (order) {
     queueEntry.custom.site = Site.current.ID;
     self._logger.info('order: {0}, pushed on to queue', order.orderNo);
   });
+
+  return true;
 };
 
 OrderWebhookQueue.prototype.pop = function () {
@@ -43,6 +45,7 @@ OrderWebhookQueue.prototype._loadEntries = function () {
     Site.current.ID,
     OrderWebhook.Status.PENDING,
   );
+
   this._logger.debug('queue loaded, site: {0}, size: {1}', Site.current.ID, this._queueEntries.count);
 };
 

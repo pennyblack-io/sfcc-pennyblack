@@ -5,9 +5,11 @@
  */
 class Site {
   _preferences;
+  _id;
 
-  constructor(preferences) {
+  constructor(preferences, id) {
     this._preferences = preferences;
+    this._id = id;
   }
 
   getCustomPreferenceValue(name) {
@@ -15,6 +17,10 @@ class Site {
       return null;
     }
     return this._preferences[name];
+  }
+
+  get ID() {
+    return this._id;
   }
 
   get current() {
