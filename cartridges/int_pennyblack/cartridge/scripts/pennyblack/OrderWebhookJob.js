@@ -65,7 +65,7 @@ OrderWebhookJob.prototype._sendWebhook = function (entry) {
   );
 };
 
-OrderWebhookQueue.prototype._updateEntry = function (entry, status, code, message) {
+OrderWebhookJob.prototype._updateEntry = function (entry, status, code, message) {
   Transaction.wrap(function () {
     entry.custom.status = status;
     entry.custom.response_code = code;
