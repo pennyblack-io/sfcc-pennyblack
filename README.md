@@ -39,7 +39,7 @@ The following is an example code snippet, the intent is to place the newly creat
 
 This example is based on [v105.2.1](https://github.com/SalesforceCommerceCloud/sitegenesis/tree/v105.2.1) of SiteGenesis and modifying the controller at `COSummary.js::showConfirmation()` within `app_storefront_controllers/cartridge/controllers`.
 
-Depending on your specific version and customisations the exact placement and the way in which the order is retrived might change but the following should remain.
+Depending on your specific version and customisations the exact placement and the way in which the order is retrieved might change but the following should remain.
 
 ```
 var OrderWebhookQueue = require('*/cartridge/scripts/pennyblack/OrderWebhookQueue');
