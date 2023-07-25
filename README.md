@@ -25,6 +25,13 @@ These steps apply to both SFRA and SiteGenesis
 - **Update custom preferences per site**  
   Navigate to `Merchant Tools > Site Preferences > Custom Preferences > PennyBlack`. From here you can set the API Key and Enable or Disable the integration for each site.
 
+- **Schedule when order data is sent to Penny Black**  
+  Navigate to `Administration > Jobs > PennyBlack_OrderWebhook > Schedule and History`, from here you can setup an automatic schedule.
+  - **Enabled:** checked
+  - **Active > Trigger:** Recurring Interval
+  - **Runtime > Every > Amount:** 5
+  - **Runtime > Every > Interval:** Minutes
+
 ### SFRA
 
 - **Upload the `int_pennyblack_sfra` cartridge**  

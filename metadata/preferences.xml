@@ -14,7 +14,7 @@
                 <type>boolean</type>
                 <mandatory-flag>true</mandatory-flag>
                 <externally-managed-flag>false</externally-managed-flag>
-                <default-value>true</default-value>
+                <default-value>false</default-value>
             </attribute-definition>
             <attribute-definition attribute-id="pennyblack_mode">
                 <display-name xml:lang="x-default">Mode</display-name>
