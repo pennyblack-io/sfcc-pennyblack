@@ -4,11 +4,11 @@ This plugin integrates SFCC to Penny Black providing the data for personalised p
 
 ## Installation
 
-The installation steps differ slightly between SFRA and SiteGenesis, please follow the common steps and then the steps for your particuarlar setup.
+The installation steps differ slightly between SFRA and SiteGenesis, please follow the common steps and then the steps for your particular setup.
 
 ### Common Steps
 
-These steps apply to both SFRA and SiteGensis
+These steps apply to both SFRA and SiteGenesis
 
 - **Download latest version**  
   Download and extract the latest release from the [releases page](https://github.com/pennyblack-io/sfcc-pennyblack/releases)
