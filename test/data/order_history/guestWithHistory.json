@@ -3,17 +3,20 @@
     {
       "orderNo": "3",
       "customer": { "anonymous": true },
-      "totalGrossPrice": { "value": 10.05 }
+      "totalGrossPrice": { "value": 10.05 },
+      "creationDate": "2023-07-17T14:15:36Z"
     },
     {
       "orderNo": "2",
       "customer": { "anonymous": true },
-      "totalGrossPrice": { "value": 20.5 }
+      "totalGrossPrice": { "value": 20.5 },
+      "creationDate": "2023-01-02T12:00:00Z"
     },
     {
       "orderNo": "1",
       "customer": { "anonymous": true },
-      "totalGrossPrice": { "value": 15.0 }
+      "totalGrossPrice": { "value": 15.0 },
+      "creationDate": "2023-01-01T12:00:00Z"
     }
   ]
 }

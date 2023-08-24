@@ -3,7 +3,8 @@
     {
       "orderNo": "1",
       "customer": { "anonymous": true },
-      "totalGrossPrice": { "value": 10.05 }
+      "totalGrossPrice": { "value": 10.05 },
+      "creationDate": "2023-07-17T14:15:36Z"
     }
   ]
 }

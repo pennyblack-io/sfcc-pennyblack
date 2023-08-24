@@ -9,17 +9,34 @@ class OrderMgr {
   _data;
 
   constructor(data) {
+    Object.keys(data).forEach((key) => {
+      if (data[key].hasOwnProperty('creationDate')) {
+        data[key].creationDate = new Date(data[key].creationDate);
+      }
+    });
+
     this._data = data;
   }
 
   searchOrders(queryString, sortString, ...args) {
-    if (queryString != 'customerEmail = {0}') {
-      throw new Error('Fake OrderMgr only implements searching by customerEmail');
+    if (queryString != 'customerEmail = {0} AND creationDate < {1}') {
+      throw new Error('Fake OrderMgr only supports the query string "customerEmail = {0} AND creationDate < {1}"');
     }
     if (sortString != null) {
       throw new Error('Fake OrderMgr only allows for null sortString');
     }
-    return new SeekableIterator(args[0] in this._data ? this._data[args[0]] : []);
+
+    let email = args[0];
+    let cutOffDate = args[1];
+
+    let orders = this._data[email] || [];
+
+    let filteredOrders = orders.filter(order => {
+      let orderDate = new Date(order.creationDate);
+      return orderDate < cutOffDate;
+    });
+
+    return new SeekableIterator(filteredOrders);
   }
 }
 

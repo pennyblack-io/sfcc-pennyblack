@@ -117,7 +117,7 @@ OrderToPayloadTransformer.prototype._getCouponCodes = function () {
 };
 
 OrderToPayloadTransformer.prototype._getOrderHistory = function () {
-  var orders = OrderMgr.searchOrders('customerEmail = {0}', null, this._order.customerEmail);
+  var orders = OrderMgr.searchOrders('customerEmail = {0} AND creationDate < {1}', null, this._order.customerEmail, this._order.creationDate);
 
   var totalOrders = orders.count;
   var totalSpent = 0.0;
