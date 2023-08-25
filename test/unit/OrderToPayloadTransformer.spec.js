@@ -273,5 +273,25 @@ describe('OrderToPayloadTransformer', function () {
         expect(payload.customer.total_orders).to.eq(1);
       });
     });
+
+    describe('member where order being processed is not the most recent in the order history', function() {
+      const OrderToPayloadTransformer = proxyquire(
+        '../../cartridges/int_pennyblack/cartridge/scripts/pennyblack/OrderToPayloadTransformer.js',
+        {
+          'dw/util/Locale': Locale,
+          'dw/order/OrderMgr': new OrderMgr(DataLoader('order_history', 'memberWithHistory')),
+        },
+      );
+
+      it('sets customer.total_spent to the total gross value of all placed orders relative to the history of the current order', function () {
+        let payload = new OrderToPayloadTransformer().transform(new Order(DataLoader('order', 'memberWithFutureHistory')));
+        expect(payload.customer.total_spent).to.eq(121.59);
+      });
+
+      it('sets customer.total_orders to count of all placed orders relative to the history of the current order', function () {
+        let payload = new OrderToPayloadTransformer().transform(new Order(DataLoader('order', 'memberWithFutureHistory')));
+        expect(payload.customer.total_orders).to.eq(3);
+      });
+    });
   });
 });
