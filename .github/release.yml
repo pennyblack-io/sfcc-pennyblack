@@ -1,0 +1,20 @@
+changelog:
+  exclude:
+    labels:
+      - skip-changelog
+  categories:
+    - title: New Features 🎉
+      labels:
+        - enhancement
+    - title: Bugs Squashed 🐛
+      labels:
+        - bug
+    - title: Dependency Updates ⬆️
+      labels:
+        - dependencies
+    - title: Technical Debt Paid Off 🤑
+      labels:
+        - technical-debt
+    - title: Other Changes
+      labels:
+        - '*'
