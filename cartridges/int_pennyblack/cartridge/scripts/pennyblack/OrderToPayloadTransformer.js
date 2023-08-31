@@ -26,10 +26,17 @@ OrderToPayloadTransformer.prototype._buildCustomerData = function () {
   customer.first_name = this._order.defaultShipment.shippingAddress.firstName;
   customer.last_name = this._order.defaultShipment.shippingAddress.lastName;
   customer.email = this._order.customerEmail;
-  customer.language = Locale.getLocale(this._order.customerLocaleID).language;
   customer.total_orders = totalOrders;
   customer.tags = this._getCustomerGroups();
   customer.total_spent = totalSpent;
+
+  var locale = Locale.getLocale(this._order.customerLocaleID);
+  var language = locale ? locale.language : null;
+
+  if (language) {
+    customer.language = language;
+  }
+
   return customer;
 };
 
@@ -117,7 +124,12 @@ OrderToPayloadTransformer.prototype._getCouponCodes = function () {
 };
 
 OrderToPayloadTransformer.prototype._getOrderHistory = function () {
-  var orders = OrderMgr.searchOrders('customerEmail = {0} AND creationDate < {1}', null, this._order.customerEmail, this._order.creationDate);
+  var orders = OrderMgr.searchOrders(
+    'customerEmail = {0} AND creationDate < {1}',
+    null,
+    this._order.customerEmail,
+    this._order.creationDate,
+  );
 
   var totalOrders = orders.count;
   var totalSpent = 0.0;

@@ -167,6 +167,13 @@ describe('OrderToPayloadTransformer', function () {
         expect('billing_postcode' in payload).to.eq(false);
         expect('billing_city' in payload).to.eq(false);
       });
+
+      it('skips language when locale has empty language field', function () {
+        let data = DataLoader('order', 'guestWithNoHistory');
+        data.customerLocaleID = 'de_DE';
+        let payload = new OrderToPayloadTransformer().transform(new Order(data));
+        expect('language' in payload.customer).to.eq(false);
+      });
     });
 
     describe('guest with previous orders', function () {
@@ -274,7 +281,7 @@ describe('OrderToPayloadTransformer', function () {
       });
     });
 
-    describe('member where order being processed is not the most recent in the order history', function() {
+    describe('member where order being processed is not the most recent in the order history', function () {
       const OrderToPayloadTransformer = proxyquire(
         '../../cartridges/int_pennyblack/cartridge/scripts/pennyblack/OrderToPayloadTransformer.js',
         {
@@ -284,12 +291,16 @@ describe('OrderToPayloadTransformer', function () {
       );
 
       it('sets customer.total_spent to the total gross value of all placed orders relative to the history of the current order', function () {
-        let payload = new OrderToPayloadTransformer().transform(new Order(DataLoader('order', 'memberWithFutureHistory')));
+        let payload = new OrderToPayloadTransformer().transform(
+          new Order(DataLoader('order', 'memberWithFutureHistory')),
+        );
         expect(payload.customer.total_spent).to.eq(121.59);
       });
 
       it('sets customer.total_orders to count of all placed orders relative to the history of the current order', function () {
-        let payload = new OrderToPayloadTransformer().transform(new Order(DataLoader('order', 'memberWithFutureHistory')));
+        let payload = new OrderToPayloadTransformer().transform(
+          new Order(DataLoader('order', 'memberWithFutureHistory')),
+        );
         expect(payload.customer.total_orders).to.eq(3);
       });
     });
