@@ -59,7 +59,7 @@ OrderWebhookJob.prototype._sendWebhook = function (entry) {
 
   this._updateEntry(
     entry,
-    client.statusCode == 201 ? OrderWebhook.Status.SUCCESS : OrderWebhook.Status.ERROR,
+    client.statusCode == 202 ? OrderWebhook.Status.SUCCESS : OrderWebhook.Status.ERROR,
     client.statusCode,
     client.text,
   );
