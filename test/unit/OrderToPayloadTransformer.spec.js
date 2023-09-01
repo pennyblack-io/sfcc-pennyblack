@@ -5,6 +5,7 @@ const DataLoader = require('../data/DataLoader');
 const Locale = require('../mocks/dw/util/Locale');
 const Order = require('../mocks/dw/order/Order');
 const OrderMgr = require('../mocks/dw/order/OrderMgr');
+const Collection = require('../mocks/dw/util/Collection');
 
 describe('OrderToPayloadTransformer', function () {
   describe('transform()', function () {
@@ -96,7 +97,7 @@ describe('OrderToPayloadTransformer', function () {
 
       it('sets order.billing_country to the country as set in the billing address of the order', function () {
         let payload = new OrderToPayloadTransformer().transform(new Order(DataLoader('order', 'guestWithNoHistory')));
-        expect(payload.order.billing_country).to.eq('gb');
+        expect(payload.order.billing_country).to.eq('GB');
       });
 
       it('sets order.billing_postcode to the postcode as set in the billing address of the order', function () {
@@ -111,7 +112,7 @@ describe('OrderToPayloadTransformer', function () {
 
       it('sets order.shipping_country to the country as set in the shipping address of the order', function () {
         let payload = new OrderToPayloadTransformer().transform(new Order(DataLoader('order', 'guestWithNoHistory')));
-        expect(payload.order.shipping_country).to.eq('gb');
+        expect(payload.order.shipping_country).to.eq('GB');
       });
 
       it('sets order.shipping_postcode to the postcode as set in the shipping address of the order', function () {
@@ -173,6 +174,77 @@ describe('OrderToPayloadTransformer', function () {
         data.customerLocaleID = 'de_DE';
         let payload = new OrderToPayloadTransformer().transform(new Order(data));
         expect('language' in payload.customer).to.eq(false);
+      });
+
+      it('falls back to billing address when no shipping address is present', function () {
+        let payload = new OrderToPayloadTransformer().transform(
+          new Order(DataLoader('order', 'guestWithNoShippingAddress')),
+        );
+        expect(payload.customer.first_name).to.eq('John');
+        expect(payload.customer.last_name).to.eq('Doe');
+      });
+
+      it('skips shipping_country when not specified', function () {
+        let data = DataLoader('order', 'guestWithNoHistory');
+        data.defaultShipment.shippingAddress.countryCode = null;
+        let payload = new OrderToPayloadTransformer().transform(new Order(data));
+        expect('shipping_country' in payload.order).to.eq(false);
+      });
+
+      it('skips shipping_postcode when not specified', function () {
+        let data = DataLoader('order', 'guestWithNoHistory');
+        data.defaultShipment.shippingAddress.postalCode = null;
+        let payload = new OrderToPayloadTransformer().transform(new Order(data));
+        expect('shipping_postcode' in payload.order).to.eq(false);
+      });
+
+      it('skips shipping_city when not specified', function () {
+        let data = DataLoader('order', 'guestWithNoHistory');
+        data.defaultShipment.shippingAddress.city = null;
+        let payload = new OrderToPayloadTransformer().transform(new Order(data));
+        expect('shipping_city' in payload.order).to.eq(false);
+      });
+
+      it('skips billing_country when not specified', function () {
+        let data = DataLoader('order', 'guestWithNoHistory');
+        data.billingAddress.countryCode = null;
+        let payload = new OrderToPayloadTransformer().transform(new Order(data));
+        expect('billing_country' in payload.order).to.eq(false);
+      });
+
+      it('skips billing_postcode when not specified', function () {
+        let data = DataLoader('order', 'guestWithNoHistory');
+        data.billingAddress.postalCode = null;
+        let payload = new OrderToPayloadTransformer().transform(new Order(data));
+        expect('billing_postcode' in payload.order).to.eq(false);
+      });
+
+      it('skips billing_city when not specified', function () {
+        let data = DataLoader('order', 'guestWithNoHistory');
+        data.billingAddress.city = null;
+        let payload = new OrderToPayloadTransformer().transform(new Order(data));
+        expect('billing_city' in payload.order).to.eq(false);
+      });
+
+      it('skips skus when not specified', function () {
+        let data = DataLoader('order', 'guestWithNoHistory');
+        data.productLineItems = new Collection([]);
+        let payload = new OrderToPayloadTransformer().transform(new Order(data));
+        expect('skus' in payload.order).to.eq(false);
+      });
+
+      it('skips product_titles when not specified', function () {
+        let data = DataLoader('order', 'guestWithNoHistory');
+        data.productLineItems = new Collection([]);
+        let payload = new OrderToPayloadTransformer().transform(new Order(data));
+        expect('product_titles' in payload.order).to.eq(false);
+      });
+
+      it('skips promo_codes when not specified', function () {
+        let data = DataLoader('order', 'guestWithNoHistory');
+        data.couponLineItems = new Collection([]);
+        let payload = new OrderToPayloadTransformer().transform(new Order(data));
+        expect('promo_codes' in payload.order).to.eq(false);
       });
     });
 
