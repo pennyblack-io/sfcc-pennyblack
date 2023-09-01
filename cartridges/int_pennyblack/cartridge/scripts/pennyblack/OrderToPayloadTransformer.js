@@ -23,12 +23,18 @@ OrderToPayloadTransformer.prototype._buildCustomerData = function () {
 
   var customer = {};
   customer.vendor_customer_id = this._customer.ID;
-  customer.first_name = this._order.defaultShipment.shippingAddress.firstName;
-  customer.last_name = this._order.defaultShipment.shippingAddress.lastName;
   customer.email = this._order.customerEmail;
   customer.total_orders = totalOrders;
   customer.tags = this._getCustomerGroups();
   customer.total_spent = totalSpent;
+
+  if (this._order.defaultShipment.shippingAddress) {
+    customer.first_name = this._order.defaultShipment.shippingAddress.firstName;
+    customer.last_name = this._order.defaultShipment.shippingAddress.lastName;
+  } else if (this._order.billingAddress) {
+    customer.first_name = this._order.billingAddress.firstName;
+    customer.last_name = this._order.billingAddress.lastName;
+  }
 
   var locale = Locale.getLocale(this._order.customerLocaleID);
   var language = locale ? locale.language : null;
@@ -51,18 +57,44 @@ OrderToPayloadTransformer.prototype._buildOrderData = function () {
   order.created_at = this._order.creationDate.toISOString();
   order.total_amount = this._order.totalGrossPrice.value;
   order.total_items = this._order.productLineItems.length;
-  order.shipping_country = this._order.defaultShipment.shippingAddress.countryCode.value;
-  order.shipping_postcode = this._order.defaultShipment.shippingAddress.postalCode;
-  order.shipping_city = this._order.defaultShipment.shippingAddress.city;
   order.currency = this._order.currencyCode;
-  order.skus = skus;
-  order.product_titles = productTitles;
-  order.promo_codes = couponCodes;
+
+  if (Array.isArray(skus) && skus.length > 0) {
+    order.skus = skus;
+  }
+
+  if (Array.isArray(productTitles) && productTitles.length > 0) {
+    order.product_titles = productTitles;
+  }
+
+  if (Array.isArray(couponCodes) && couponCodes.length > 0) {
+    order.promo_codes = couponCodes;
+  }
+
+  if ('shippingAddress' in this._order.defaultShipment && this._order.defaultShipment.shippingAddress != null) {
+    var shippingAddress = this._order.defaultShipment.shippingAddress;
+    if (shippingAddress.countryCode && shippingAddress.countryCode.value) {
+      order.shipping_country = shippingAddress.countryCode.value.toUpperCase();
+    }
+    if (shippingAddress.postalCode) {
+      order.shipping_postcode = shippingAddress.postalCode;
+    }
+    if (shippingAddress.city) {
+      order.shipping_city = shippingAddress.city;
+    }
+  }
 
   if ('billingAddress' in this._order && this._order.billingAddress != null) {
-    order.billing_country = this._order.billingAddress.countryCode.value;
-    order.billing_postcode = this._order.billingAddress.postalCode;
-    order.billing_city = this._order.billingAddress.city;
+    var billingAddress = this._order.billingAddress;
+    if (billingAddress.countryCode && billingAddress.countryCode.value) {
+      order.billing_country = billingAddress.countryCode.value.toUpperCase();
+    }
+    if (billingAddress.postalCode) {
+      order.billing_postcode = billingAddress.postalCode;
+    }
+    if (billingAddress.city) {
+      order.billing_city = billingAddress.city;
+    }
   }
 
   if (giftMessages.length > 0) {
