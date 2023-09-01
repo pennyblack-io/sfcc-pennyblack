@@ -31,7 +31,7 @@ OrderToPayloadTransformer.prototype._buildCustomerData = function () {
   if (this._order.defaultShipment.shippingAddress) {
     customer.first_name = this._order.defaultShipment.shippingAddress.firstName;
     customer.last_name = this._order.defaultShipment.shippingAddress.lastName;
-  } else if (this._order.billingAddress) {
+  } else {
     customer.first_name = this._order.billingAddress.firstName;
     customer.last_name = this._order.billingAddress.lastName;
   }
