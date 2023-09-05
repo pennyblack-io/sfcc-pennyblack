@@ -13,6 +13,7 @@ OrderToPayloadTransformer.prototype.transform = function (order) {
 OrderToPayloadTransformer.prototype._buildPayload = function () {
   return {
     origin: 'sfcc',
+    origin_app_version: '1.0.4',
     customer: this._buildCustomerData(),
     order: this._buildOrderData(),
   };
