@@ -246,6 +246,28 @@ describe('OrderToPayloadTransformer', function () {
         let payload = new OrderToPayloadTransformer().transform(new Order(data));
         expect('promo_codes' in payload.order).to.eq(false);
       });
+
+      it('uses empty string for name when shipping address name is null', function () {
+        let data = DataLoader('order', 'guestWithNoHistory');
+        data.defaultShipment.shippingAddress.firstName = null;
+        data.defaultShipment.shippingAddress.lastName = null;
+        let payload = new OrderToPayloadTransformer().transform(new Order(data));
+        expect(payload.customer.first_name).to.eq('');
+        expect(typeof payload.customer.first_name).to.eq('string');
+        expect(payload.customer.last_name).to.eq('');
+        expect(typeof payload.customer.last_name).to.eq('string');
+      });
+
+      it('uses empty string for name when billing address name is null', function () {
+        let data = DataLoader('order', 'guestWithNoShippingAddress');
+        data.billingAddress.firstName = null;
+        data.billingAddress.lastName = null;
+        let payload = new OrderToPayloadTransformer().transform(new Order(data));
+        expect(payload.customer.first_name).to.eq('');
+        expect(typeof payload.customer.first_name).to.eq('string');
+        expect(payload.customer.last_name).to.eq('');
+        expect(typeof payload.customer.last_name).to.eq('string');
+      });
     });
 
     describe('guest with previous orders', function () {
