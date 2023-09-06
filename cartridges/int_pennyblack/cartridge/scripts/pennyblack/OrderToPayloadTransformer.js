@@ -29,13 +29,18 @@ OrderToPayloadTransformer.prototype._buildCustomerData = function () {
   customer.tags = this._getCustomerGroups();
   customer.total_spent = totalSpent;
 
+  var first_name, last_name;
+
   if (this._order.defaultShipment.shippingAddress) {
-    customer.first_name = this._order.defaultShipment.shippingAddress.firstName;
-    customer.last_name = this._order.defaultShipment.shippingAddress.lastName;
+    first_name = this._order.defaultShipment.shippingAddress.firstName;
+    last_name = this._order.defaultShipment.shippingAddress.lastName;
   } else {
-    customer.first_name = this._order.billingAddress.firstName;
-    customer.last_name = this._order.billingAddress.lastName;
+    first_name = this._order.billingAddress.firstName;
+    last_name = this._order.billingAddress.lastName;
   }
+
+  customer.first_name = first_name !== null && typeof first_name === 'string' ? first_name : '';
+  customer.last_name = last_name !== null && typeof last_name === 'string' ? last_name : '';
 
   var locale = Locale.getLocale(this._order.customerLocaleID);
   var language = locale ? locale.language : null;
