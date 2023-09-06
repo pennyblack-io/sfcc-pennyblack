@@ -1,7 +1,7 @@
 {
   "name": "pennyblack",
-  "version": "0.0.1",
-  "description": "New overlay cartridge",
+  "version": "1.0.4",
+  "description": "SFCC integration to Penny Black for transmitting orders",
   "main": "index.js",
   "scripts": {
     "lint": "sgmf-scripts --lint js",
